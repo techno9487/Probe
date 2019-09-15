@@ -20,5 +20,9 @@ int main(int argc, char* argv[])
         return -1;
     }
 
+    //TODO: Daemon loop and signal handling
+
+    network_close();
+
     return 0;
 }

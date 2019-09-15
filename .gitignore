@@ -1,4 +1,4 @@
 build/
-probe
 .vscode/
 *.o
+probe_dbg

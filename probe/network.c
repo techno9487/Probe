@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <netdb.h>
+#include <unistd.h>
 
 #include "dns.h"
 
@@ -16,14 +17,32 @@ int network_init(char* host, int port)
         return -1;
     }
 
-    sockfd = socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);
+    switch(addr_server.sa_family)
+    {
+        case AF_INET:
+            sockfd = socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);
+            struct sockaddr_in* addr_v4 = (struct sockaddr_in*)&addr_server;
+            addr_v4->sin_port = htons(port);
+            break;
+        case AF_INET6:
+            sockfd = socket(AF_INET6,SOCK_DGRAM,IPPROTO_UDP);
+            struct sockaddr_in6* addr_v6 = (struct sockaddr_in6*)&addr_server;
+            addr_v6->sin6_port = htons(port);
+        default:
+            return -3;
+            break;
+    }
+    
     if ( sockfd < 0 ) {
         return -2;
     }
 
-    
-
     return 0;
+}
+
+void network_close()
+{
+    close(sockfd);
 }
 
 int char_to_addr(char* host, struct sockaddr* addr)
